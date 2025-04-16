@@ -1,4 +1,8 @@
 {
+  "title": "Software Upgrade v18",
+  "summary": "Software Upgrade v18",
+  "deposit": "1000000000uxion",
+  "expedited": false,
   "messages": [
     {
       "@type": "/cosmos.upgrade.v1beta1.MsgSoftwareUpgrade",
@@ -10,9 +14,5 @@
         "upgraded_client_state": null
       }
     }
-  ],
-  "title": "Software Upgrade v18",
-  "summary": "Software Upgrade v18",
-  "deposit": "1000000000uxion",
-  "expedited": false
+  ]
 }
