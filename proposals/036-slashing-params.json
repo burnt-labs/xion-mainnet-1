@@ -14,7 +14,6 @@
     ],
     "title": "Adjust slashing missed blocks threshold",
     "summary": "Adjust slashing missed blocks threshold 3x to accomodate increased block speed",
-    "metadata": "",
     "deposit": "1000000000uxion",
     "expedited": false
 }

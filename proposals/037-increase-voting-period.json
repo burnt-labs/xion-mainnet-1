@@ -34,8 +34,6 @@
     }
   ],
   "title": "Extend Mainnet Voting Period",
-  "summary": "Currently the voting period is one day. We intend to raise it to 4 days to allow for more time to react to proposals.",
-  "metadata": "",
   "deposit": "1000000000uxion",
   "expedited": false
 }
