@@ -15,7 +15,6 @@
     ],
     "title": "Set minimum commissions",
     "summary": "Set minimum validator delegation commission percentage to 5%",
-    "metadata": "",
     "deposit": "1000000000uxion",
     "expedited": false
 }
