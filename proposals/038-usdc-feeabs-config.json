@@ -1,6 +1,17 @@
 {
     "messages": [
         {
+            "@type": "/feeabstraction.feeabs.v1beta1.MsgUpdateParams",
+            "params": {
+                "native_ibced_in_osmosis": "ibc/2E3784772E70F7B3A638BA88F65C8BE125D3CDB6E28C6AABC51098C94F5E16A5",
+                "chain_name": "Noble",
+                "ibc_transfer_channel": "channel-1",
+                "ibc_query_icq_channel": "channel-14",
+                "osmosis_crosschain_swap_address": "osmo1xpdyep7ssqz2m90ukmje25atr0f9eekh6lc4ttn4dhf2670dg64s5lnxke"
+            },
+            "authority": "xion10d07y265gmmuvt4z0w9aw880jnsr700jctf8qc"
+        },
+        {
             "@type": "/cosmos.gov.v1.MsgExecLegacyContent",
             "content": {
                 "@type": "/feeabstraction.feeabs.v1beta1.AddHostZoneProposal",
