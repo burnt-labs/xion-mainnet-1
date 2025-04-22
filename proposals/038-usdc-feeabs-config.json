@@ -2,24 +2,25 @@
     "messages": [
         {
             "@type": "/feeabstraction.feeabs.v1beta1.MsgUpdateParams",
+            "authority": "xion10d07y265gmmuvt4z0w9aw880jnsr700jctf8qc",
             "params": {
                 "native_ibced_in_osmosis": "ibc/2E3784772E70F7B3A638BA88F65C8BE125D3CDB6E28C6AABC51098C94F5E16A5",
+                "osmosis_query_twap_path": "",
                 "chain_name": "Noble",
                 "ibc_transfer_channel": "channel-1",
                 "ibc_query_icq_channel": "channel-14",
                 "osmosis_crosschain_swap_address": "osmo1xpdyep7ssqz2m90ukmje25atr0f9eekh6lc4ttn4dhf2670dg64s5lnxke"
-            },
-            "authority": "xion10d07y265gmmuvt4z0w9aw880jnsr700jctf8qc"
+            }
         },
         {
             "@type": "/feeabstraction.feeabs.v1beta1.MsgAddHostZone",
+            "authority": "xion10d07y265gmmuvt4z0w9aw880jnsr700jctf8qc",
             "host_chain_config": {
                 "ibc_denom": "ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349",
                 "osmosis_pool_token_denom_in": "ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4",
                 "pool_id": "2444",
-                "status": 0
-            },
-            "authority": "xion10d07y265gmmuvt4z0w9aw880jnsr700jctf8qc"
+                "status": "UPDATED"
+            }
         }
     ],
     "title": "Add $USDC IBC denomination to Host Zone",
