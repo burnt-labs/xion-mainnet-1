@@ -24,7 +24,7 @@
         }
     ],
     "title": "Add $USDC IBC denomination to Host Zone",
-    "summary": "Add $USDC IBC denomination to the Host Zone configuration",
+    "summary": "This proposal updates the fee abstraction module by configuring support for $USDC from the Noble chain. It sets the IBC denomination for native $USDC (ibc/2E3784...16A5), defines the IBC transfer channel (channel-1) and ICQ query channel (channel-14), and registers the Osmosis cross-chain swap address used for routing transactions involving Noble assets. Additionally, the proposal updates the Host Zone pool configuration to recognize the $USDC IBC denomination from Noble (ibc/F082B6...E349), linking it to pool ID 2444 for use in fee abstraction swaps. The status of the Host Zone is marked as UPDATED to reflect the activation of this configuration.",
     "deposit": "1000000000uxion",
     "expedited": false,
     "metadata": ""

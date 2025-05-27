@@ -34,6 +34,7 @@
     }
   ],
   "title": "Extend Mainnet Voting Period",
+  "summary": "This proposal updates the on-chain governance parameters to extend the mainnet voting period from 24 hours to 96 hours. All other governance settings, including deposit requirements, quorum, threshold, veto threshold, and expedited voting parameters, remain unchanged. The extension is intended to provide more time for validators and the broader community to review and respond to governance proposals.",
   "deposit": "1000000000uxion",
   "expedited": false
 }
