@@ -9,7 +9,7 @@
       "authority": "xion10d07y265gmmuvt4z0w9aw880jnsr700jctf8qc",
       "plan": {
         "name": "v19",
-        "height": "7020000",
+        "height": "9150000",
         "info": "https://raw.githubusercontent.com/burnt-labs/xion-mainnet-1/main/releases/v19.json",
         "upgraded_client_state": null
       }
