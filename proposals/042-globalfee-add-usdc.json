@@ -1,0 +1,34 @@
+{
+    "title": "Add Noble to globalfee module",
+    "description": "Add Noble to globalfee module",
+    "changes": [
+        {
+            "subspace": "globalfee",
+            "key": "MinimumGasPricesParam",
+            "value": [
+                {
+                    "denom": "ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349",
+                    "amount": "0.005000000000000000"
+                },
+                {
+                    "denom": "uxion",
+                    "amount": "0.001000000000000000"
+                }
+            ]
+        },
+        {
+            "subspace": "globalfee",
+            "key": "BypassMinFeeMsgTypes",
+            "value": [
+                "/xion.v1.MsgSend",
+                "/xion.v1.MsgMultiSend",
+                "/xion.jwk.v1.MsgDeleteAudience",
+                "/xion.jwk.v1.MsgDeleteAudienceClaim",
+                "/cosmos.authz.v1beta1.MsgRevoke",
+                "/cosmos.feegrant.v1beta1.MsgRevokeAllowance"
+            ]
+        }
+    ],
+    "deposit": "5000000000uxion",
+    "expedited": true
+}
