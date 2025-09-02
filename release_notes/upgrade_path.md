@@ -27,7 +27,7 @@ This document outlines the complete upgrade history of the Xion mainnet blockcha
 | "v18" | 7,020,000 | #034 | v18.0.2 | ✅ Complete |
 | "v19" | 9,150,000 | #040 | v19.0.2 | ✅ Complete |
 | "v20" | 10,930,000 | #044 | v20.0.0 | ✅ Complete |
-| "v21" | 12,690,000 | #046 | v21.0.0 | 🟡 Pending |
+| "v21" | 12,690,000 | #047 | v21.0.0 | 🟡 Pending |
 
 ## Version Recommendations
 
