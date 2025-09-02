@@ -14,20 +14,20 @@ This document outlines the complete upgrade history of the Xion mainnet blockcha
 
 ### Complete Upgrade Timeline
 
-| Name | Height | Proposal | Recomended | Status |
-|--------------|---------|-----------|---------|---------|
-| Genesis | 0 | N/A | v4.0.0 | ✅ Complete |
-| "v0.3.9" | 606,689 | #001 | v6.0.0 | ✅ Complete |
-| "v7.0.0" | 1,637,000 | #002 | v7.0.0 | ✅ Complete |
-| "v9" | 1,960,000 | #005 | v9.0.0 | ✅ Complete |
-| "v11" | 3,150,000 | #007 | v11.0.1 | ✅ Complete |
-| "v14" | 3,586,500 | #011 | v14.1.2 | ✅ Complete |
-| "v16" | 5,825,000 | #023 | v16.0.1 | ✅ Complete |
-| "v17" | 5,942,000 | #025 | v17.1.1 | ✅ Complete |
-| "v18" | 7,020,000 | #034 | v18.0.2 | ✅ Complete |
-| "v19" | 9,150,000 | #040 | v19.0.2 | ✅ Complete |
-| "v20" | 10,930,000 | #044 | v20.0.0 | ✅ Complete |
-| "v21" | 12,690,000 | #047 | v21.0.0 | 🟡 Pending |
+| Upgrade Name | Height | Proposal | Latest | Status |
+|--------------|---------|-----------|--------|---------|
+| Genesis | 0 | N/A | [v4.0.0](https://github.com/burnt-labs/xion/releases/tag/v4.0.0) | ✅ Complete |
+| ["v0.3.9"](https://www.mintscan.io/xion/proposals/1) | [606,689](https://www.mintscan.io/xion/block/606689) | #001 | [v6.0.1](https://github.com/burnt-labs/xion/releases/tag/v6.0.1) | ✅ Complete |
+| ["v7.0.0"](https://www.mintscan.io/xion/proposals/2) | [1,637,000](https://www.mintscan.io/xion/block/1637000) | #002 | [v7.0.1](https://github.com/burnt-labs/xion/releases/tag/v7.0.1) | ✅ Complete |
+| ["v9"](https://www.mintscan.io/xion/proposals/5) | [1,960,000](https://www.mintscan.io/xion/block/1960000) | #005 | [v9.0.2](https://github.com/burnt-labs/xion/releases/tag/v9.0.2) | ✅ Complete |
+| ["v11"](https://www.mintscan.io/xion/proposals/7) | [3,150,000](https://www.mintscan.io/xion/block/3150000) | #007 | [v11.0.1](https://github.com/burnt-labs/xion/releases/tag/v11.0.1) | ✅ Complete |
+| ["v14"](https://www.mintscan.io/xion/proposals/11) | [3,586,500](https://www.mintscan.io/xion/block/3586500) | #011 | [v14.1.2](https://github.com/burnt-labs/xion/releases/tag/v14.1.2) | ✅ Complete |
+| ["v16"](https://www.mintscan.io/xion/proposals/23) | [5,825,000](https://www.mintscan.io/xion/block/5825000) | #023 | [v16.0.1](https://github.com/burnt-labs/xion/releases/tag/v16.0.1) | ✅ Complete |
+| ["v17"](https://www.mintscan.io/xion/proposals/25) | [5,942,000](https://www.mintscan.io/xion/block/5942000) | #025 | [v17.1.1](https://github.com/burnt-labs/xion/releases/tag/v17.1.1) | ✅ Complete |
+| ["v18"](https://www.mintscan.io/xion/proposals/34) | [7,020,000](https://www.mintscan.io/xion/block/7020000) | #034 | [v18.0.2](https://github.com/burnt-labs/xion/releases/tag/v18.0.2) | ✅ Complete |
+| ["v19"](https://www.mintscan.io/xion/proposals/40) | [9,150,000](https://www.mintscan.io/xion/block/9150000) | #040 | [v19.0.2](https://github.com/burnt-labs/xion/releases/tag/v19.0.2) | ✅ Complete |
+| ["v20"](https://www.mintscan.io/xion/proposals/44) | [10,930,000](https://www.mintscan.io/xion/block/10930000) | #044 | [v20.0.0](https://github.com/burnt-labs/xion/releases/tag/v20.0.0) | ✅ Complete |
+| ["v21"](https://www.mintscan.io/xion/proposals/47) | [12,690,000](https://www.mintscan.io/xion/block/12690000) | #047 | [v21.0.0](https://github.com/burnt-labs/xion/releases/tag/v21.0.0) | 🟡 Pending |
 
 ## Version Recommendations
 
