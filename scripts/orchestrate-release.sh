@@ -27,8 +27,7 @@ COMMIT_SHA="${COMMIT_SHA:-}"
 setup_release_branch() {
   echo "📋 Setting up release branch..."
 
-  VERSION_NUM=$(echo "$RELEASE_TAG" | sed 's/v\([0-9]*\)\.0\.0/\1/')
-  VERSION="v${VERSION_NUM}"
+  VERSION=$(echo "$RELEASE_TAG" | sed -E 's/^v([0-9]+)\..*/v\1/')
   BRANCH_NAME="release/$RELEASE_TAG"
 
   git config --local user.email "action@github.com"
@@ -83,7 +82,7 @@ fetch_release_checksums() {
 
   VERSION="${RELEASE_TAG#v}"
   CHECKSUMS_URL="https://github.com/burnt-labs/xion/releases/download/$RELEASE_TAG/xiond-${VERSION}-checksums.txt"
-  HTTP_CODE=$(curl -s -w "%{http_code}" "$CHECKSUMS_URL" -o checksums_temp.txt)
+  HTTP_CODE=$(curl -sL -w "%{http_code}" "$CHECKSUMS_URL" -o checksums_temp.txt)
 
   if [ "${HTTP_CODE: -3}" = "200" ]; then
     DARWIN_AMD64_CHECKSUM=$(grep "darwin_amd64\.tar\.gz$" checksums_temp.txt | awk '{print $1}')
@@ -153,7 +152,7 @@ generate_claude_notes() {
 
   cat > copilot_request.json <<EOF
 {
-  "model": "claude-sonnet-4",
+  "model": "openai/gpt-4o",
   "max_tokens": 4000,
   "messages": [
     {
