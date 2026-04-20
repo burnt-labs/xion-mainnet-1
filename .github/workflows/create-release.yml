@@ -47,7 +47,6 @@ jobs:
       # Mainnet: 1 week (604800s) non-expedited, 48h (172800s) expedited
       UPGRADE_WINDOW_SECONDS: "${{ inputs.expedited == true && '172800' || '604800' }}"
       PLACEHOLDER_CHECKSUM: "--ADD-HERE-YOUR-VALUE--"
-      CLAUDE_API_KEY: "${{ secrets.BURNT_CLAUDE_API_KEY }}"
       GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
       RUN_NUMBER: "${{ github.run_number }}"
       COMMIT_SHA: "${{ github.sha }}"

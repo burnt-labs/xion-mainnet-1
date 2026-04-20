@@ -16,7 +16,6 @@ DEPOSIT="${DEPOSIT:-1000000000uxion}"
 EXPEDITED="${EXPEDITED:-false}"
 UPGRADE_WINDOW_SECONDS="${UPGRADE_WINDOW_SECONDS:-172800}"
 PLACEHOLDER_CHECKSUM="${PLACEHOLDER_CHECKSUM:---ADD-HERE-YOUR-VALUE--}"
-CLAUDE_API_KEY="${CLAUDE_API_KEY:-}"
 GITHUB_TOKEN="${GITHUB_TOKEN:-}"
 RUN_NUMBER="${RUN_NUMBER:-0}"
 COMMIT_SHA="${COMMIT_SHA:-}"
@@ -141,7 +140,7 @@ fetch_github_comparison() {
 }
 
 generate_claude_notes() {
-  echo "📋 Generating release notes with Claude..."
+  echo "📋 Generating release notes via GitHub Copilot (Models API)..."
 
   PROMPT=$(cat .github/workflows/prompts/claude-api-prompt.md)
   PROMPT="${PROMPT//\{\{RELEASE_TAG\}\}/$RELEASE_TAG}"
@@ -151,9 +150,9 @@ generate_claude_notes() {
   COMPARISON_JSON=$(cat comparison_data.json | jq -c .)
   FULL_CONTENT="${PROMPT}\n\nGitHub Comparison Data:\n${COMPARISON_JSON}"
 
-  cat > claude_request.json <<EOF
+  cat > copilot_request.json <<EOF
 {
-  "model": "claude-3-5-sonnet-20241022",
+  "model": "claude-sonnet-4",
   "max_tokens": 4000,
   "messages": [
     {
@@ -164,24 +163,23 @@ generate_claude_notes() {
 }
 EOF
 
-  CLAUDE_RESPONSE=$(curl -s -X POST "https://api.anthropic.com/v1/messages" \
+  RESPONSE=$(curl -s -X POST "https://models.github.ai/inference/chat/completions" \
     -H "Content-Type: application/json" \
-    -H "x-api-key: $CLAUDE_API_KEY" \
-    -H "anthropic-version: 2023-06-01" \
-    --data @claude_request.json)
+    -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+    --data @copilot_request.json)
 
-  API_ERROR=$(echo "$CLAUDE_RESPONSE" | jq -r '.error.message // empty')
+  API_ERROR=$(echo "$RESPONSE" | jq -r '.error.message // empty')
   if [ -n "$API_ERROR" ]; then
-    echo "⚠️  Claude API error: $API_ERROR"
+    echo "⚠️  GitHub Models API error: $API_ERROR"
   else
-    RELEASE_NOTES_CONTENT=$(echo "$CLAUDE_RESPONSE" | jq -r '.content[0].text // empty')
+    RELEASE_NOTES_CONTENT=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
     if [ -n "$RELEASE_NOTES_CONTENT" ] && [ "$RELEASE_NOTES_CONTENT" != "null" ]; then
       echo "$RELEASE_NOTES_CONTENT" > generated_release_notes.md
       echo "✅ Release notes generated"
     fi
   fi
 
-  rm -f claude_request.json
+  rm -f copilot_request.json
 }
 
 create_release_files() {
@@ -326,11 +324,12 @@ main() {
   echo "================================================"
 
   # Validate required inputs
-  if [ -z "$RELEASE_TAG" ] || [ -z "$XION_API_URL" ] || [ -z "$TARGET_BRANCH" ] || [ -z "$CLAUDE_API_KEY" ] || [ -z "$GITHUB_TOKEN" ]; then
+  if [ -z "$RELEASE_TAG" ] || [ -z "$XION_API_URL" ] || [ -z "$TARGET_BRANCH" ] || [ -z "$GITHUB_TOKEN" ]; then
     echo "❌ Error: Missing required environment variables"
-    echo "Required: RELEASE_TAG, XION_API_URL, TARGET_BRANCH, CLAUDE_API_KEY, GITHUB_TOKEN"
+    echo "Required: RELEASE_TAG, XION_API_URL, TARGET_BRANCH, GITHUB_TOKEN"
     exit 1
   fi
+
 
   # Execute workflow steps
   setup_release_branch
