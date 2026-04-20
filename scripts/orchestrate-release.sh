@@ -81,14 +81,15 @@ calculate_upgrade_height() {
 fetch_release_checksums() {
   echo "📋 Fetching release checksums..."
 
-  CHECKSUMS_URL="https://github.com/burnt-labs/xion/releases/download/$RELEASE_TAG/xiond-$RELEASE_TAG-checksums.txt"
+  VERSION="${RELEASE_TAG#v}"
+  CHECKSUMS_URL="https://github.com/burnt-labs/xion/releases/download/$RELEASE_TAG/xiond-${VERSION}-checksums.txt"
   HTTP_CODE=$(curl -s -w "%{http_code}" "$CHECKSUMS_URL" -o checksums_temp.txt)
 
   if [ "${HTTP_CODE: -3}" = "200" ]; then
-    DARWIN_AMD64_CHECKSUM=$(grep "darwin_amd64.tar.gz" checksums_temp.txt | awk '{print $1}')
-    DARWIN_ARM64_CHECKSUM=$(grep "darwin_arm64.tar.gz" checksums_temp.txt | awk '{print $1}')
-    LINUX_AMD64_CHECKSUM=$(grep "linux_amd64.tar.gz" checksums_temp.txt | awk '{print $1}')
-    LINUX_ARM64_CHECKSUM=$(grep "linux_arm64.tar.gz" checksums_temp.txt | awk '{print $1}')
+    DARWIN_AMD64_CHECKSUM=$(grep "darwin_amd64\.tar\.gz$" checksums_temp.txt | awk '{print $1}')
+    DARWIN_ARM64_CHECKSUM=$(grep "darwin_arm64\.tar\.gz$" checksums_temp.txt | awk '{print $1}')
+    LINUX_AMD64_CHECKSUM=$(grep "linux_amd64\.tar\.gz$" checksums_temp.txt | awk '{print $1}')
+    LINUX_ARM64_CHECKSUM=$(grep "linux_arm64\.tar\.gz$" checksums_temp.txt | awk '{print $1}')
     echo "✅ Real checksums fetched"
   else
     echo "⚠️  Checksums not available for $RELEASE_TAG (HTTP ${HTTP_CODE: -3})"
@@ -107,7 +108,7 @@ fetch_release_checksums() {
 fetch_github_comparison() {
   echo "📋 Fetching GitHub comparison data..."
 
-  CURRENT_MAJOR=$(echo "$RELEASE_TAG" | sed 's/v\([0-9]*\)\.0\.0/\1/')
+  CURRENT_MAJOR=$(echo "$RELEASE_TAG" | sed -E 's/^v([0-9]+)\..*/\1/')
   PREVIOUS_MAJOR=$((CURRENT_MAJOR - 1))
   PREVIOUS_VERSION="v${PREVIOUS_MAJOR}.0.0"
 
