@@ -28,7 +28,8 @@ setup_release_branch() {
   echo "📋 Setting up release branch..."
 
   VERSION=$(echo "$RELEASE_TAG" | sed -E 's/^v([0-9]+)\..*/v\1/')
-  BRANCH_NAME="release/$RELEASE_TAG"
+  # Use upgrade/ prefix instead of release/ to avoid ruleset that requires PRs on release/** branches
+  BRANCH_NAME="upgrade/$RELEASE_TAG"
 
   git config --local user.email "action@github.com"
   git config --local user.name "GitHub Action"
