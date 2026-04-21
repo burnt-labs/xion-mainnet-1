@@ -353,7 +353,7 @@ commit_and_push_pr() {
       echo "⚠️  Merge failed:"
       echo "$MERGE_RESPONSE"
       echo "PR #$PR_NUMBER left open for manual review"
-      return 0
+      return 1
     }
   echo "✅ PR #$PR_NUMBER merged to $TARGET_BRANCH"
 
