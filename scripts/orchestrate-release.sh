@@ -353,15 +353,12 @@ commit_and_push_pr() {
       echo "⚠️  Merge failed:"
       echo "$MERGE_RESPONSE"
       echo "PR #$PR_NUMBER left open for manual review"
-      rm -f commit_message.txt
       return 0
     }
   echo "✅ PR #$PR_NUMBER merged to $TARGET_BRANCH"
 
   # Delete the upgrade branch after merge
   gh api -X DELETE "repos/${REPO}/git/refs/heads/${BRANCH_NAME}" 2>/dev/null || true
-
-  rm -f commit_message.txt
 }
 
 # ============================================================================
