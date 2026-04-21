@@ -329,7 +329,8 @@ commit_and_push_pr() {
   if [ -n "$EXISTING_PR" ] && [ "$EXISTING_PR" != "null" ]; then
     echo "Updating existing PR #$EXISTING_PR"
     gh pr edit "$EXISTING_PR" --repo "$REPO" --body-file pr_body.md
-    echo "✅ Updated PR #$EXISTING_PR"
+    PR_NUMBER="$EXISTING_PR"
+    echo "✅ Updated PR #$PR_NUMBER"
   else
     echo "Creating new PR"
     gh pr create \
@@ -338,8 +339,27 @@ commit_and_push_pr() {
       --head "$BRANCH_NAME" \
       --title "🚀 Upgrade to Xion $RELEASE_TAG" \
       --body-file pr_body.md
-    echo "✅ PR created successfully"
+    PR_NUMBER=$(gh pr list --repo "$REPO" --head "$BRANCH_NAME" --base "$TARGET_BRANCH" --json number --jq '.[0].number')
+    echo "✅ PR #$PR_NUMBER created"
   fi
+
+  # Squash-merge the PR (API merge produces a signed commit; linear history required by ruleset)
+  echo "📋 Merging PR #$PR_NUMBER to $TARGET_BRANCH..."
+  MERGE_RESPONSE=$(gh api \
+    -X PUT \
+    "repos/${REPO}/pulls/${PR_NUMBER}/merge" \
+    -f "merge_method=squash" \
+    -f "commit_title=🚀 Upgrade to Xion $RELEASE_TAG (#${PR_NUMBER})" 2>&1) || {
+      echo "⚠️  Merge failed:"
+      echo "$MERGE_RESPONSE"
+      echo "PR #$PR_NUMBER left open for manual review"
+      rm -f commit_message.txt
+      return 0
+    }
+  echo "✅ PR #$PR_NUMBER merged to $TARGET_BRANCH"
+
+  # Delete the upgrade branch after merge
+  gh api -X DELETE "repos/${REPO}/git/refs/heads/${BRANCH_NAME}" 2>/dev/null || true
 
   rm -f commit_message.txt
 }
