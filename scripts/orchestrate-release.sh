@@ -80,8 +80,8 @@ calculate_upgrade_height() {
 fetch_release_checksums() {
   echo "📋 Fetching release checksums..."
 
-  VERSION="${RELEASE_TAG#v}"
-  CHECKSUMS_URL="https://github.com/burnt-labs/xion/releases/download/$RELEASE_TAG/xiond-${VERSION}-checksums.txt"
+  local RELEASE_VERSION="${RELEASE_TAG#v}"
+  CHECKSUMS_URL="https://github.com/burnt-labs/xion/releases/download/$RELEASE_TAG/xiond-${RELEASE_VERSION}-checksums.txt"
   HTTP_CODE=$(curl -sL -w "%{http_code}" "$CHECKSUMS_URL" -o checksums_temp.txt)
 
   if [ "${HTTP_CODE: -3}" = "200" ]; then
