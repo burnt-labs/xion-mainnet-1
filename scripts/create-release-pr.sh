@@ -53,17 +53,17 @@ cd "$(dirname "$0")/.."
 
 # Determine version from argument or calculate from latest release
 if [ -n "$RELEASE_TAG" ]; then
-    # Validate RELEASE_TAG format (should be like v22.0.0)
-    if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+\.0\.0$ ]]; then
-        echo "Error: RELEASE_TAG must be in format vX.0.0 (e.g., v22.0.0)"
+    # Validate RELEASE_TAG format (any valid semver: vX.Y.Z)
+    if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        echo "Error: RELEASE_TAG must be in semver format vX.Y.Z (e.g., v29.0.1)"
         echo "Provided: '$RELEASE_TAG'"
         exit 1
     fi
-    
+
     # Use RELEASE_TAG from argument (full version for content)
     VERSION_FULL="$RELEASE_TAG"
-    VERSION_NUM=$(echo "$VERSION_FULL" | sed 's/v\([0-9]*\)\.0\.0/\1/')
-    # Create short version for filenames (v22 instead of v22.0.0)
+    VERSION_NUM=$(echo "$VERSION_FULL" | sed -E 's/^v([0-9]+)\..*/\1/')
+    # Create short version for filenames (v29 instead of v29.0.1)
     VERSION="v${VERSION_NUM}"
     echo "Using specified version: $VERSION_FULL (files will use: $VERSION)"
 else
