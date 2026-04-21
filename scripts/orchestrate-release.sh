@@ -257,54 +257,82 @@ generate_pr_body() {
 }
 
 commit_and_push_pr() {
-  echo "📋 Committing and creating PR..."
+  echo "📋 Committing via GitHub API (signed commits)..."
 
-  CHANGES_DETECTED=false
-  COMMIT_MESSAGE_PARTS=()
+  REPO="burnt-labs/xion-mainnet-1"
+  COMMIT_MESSAGE="Added release $RELEASE_TAG upgrade files"
 
+  # Collect files to commit
+  FILES_TO_COMMIT=()
   for file in "$PROPOSAL_FILE" "$RELEASE_FILE" "$RELEASE_NOTES_FILE"; do
     if [ -f "$file" ]; then
-      if git ls-files --error-unmatch "$file" >/dev/null 2>&1; then
-        if ! git diff --quiet "$file" 2>/dev/null; then
-          git add "$file"
-          CHANGES_DETECTED=true
-          COMMIT_MESSAGE_PARTS+=("- Updated: $file")
-        fi
-      else
-        git add "$file"
-        CHANGES_DETECTED=true
-        COMMIT_MESSAGE_PARTS+=("- Created: $file")
-      fi
+      FILES_TO_COMMIT+=("$file")
+      echo "  📄 $file"
     fi
   done
 
-  if [ "$CHANGES_DETECTED" = true ]; then
-    {
-      echo "Added release $RELEASE_TAG and historical release notes"
-      echo ""
-      printf '%s\n' "${COMMIT_MESSAGE_PARTS[@]}"
-    } > commit_message.txt
-  else
-    echo "Update PR: Refresh upgrade parameters for $VERSION" > commit_message.txt
+  if [ ${#FILES_TO_COMMIT[@]} -eq 0 ]; then
+    echo "⚠️  No files to commit"
+    return 0
   fi
 
-  if git diff --cached --quiet && git diff --quiet; then
-    git commit --allow-empty -m "$(cat commit_message.txt)"
-  else
-    git commit -m "$(cat commit_message.txt)"
+  # Ensure remote branch exists
+  if ! git ls-remote --heads origin "$BRANCH_NAME" | grep -q "$BRANCH_NAME"; then
+    # Create branch on remote via API
+    BASE_SHA=$(git rev-parse HEAD)
+    gh api "repos/${REPO}/git/refs" \
+      -f "ref=refs/heads/${BRANCH_NAME}" \
+      -f "sha=${BASE_SHA}" || true
   fi
 
-  git push origin "$BRANCH_NAME"
+  # Get the current commit SHA of the branch
+  PARENT_SHA=$(gh api "repos/${REPO}/git/refs/heads/${BRANCH_NAME}" --jq '.object.sha')
+  BASE_TREE=$(gh api "repos/${REPO}/git/commits/${PARENT_SHA}" --jq '.tree.sha')
 
-  EXISTING_PR=$(gh pr list --head "$BRANCH_NAME" --base "$TARGET_BRANCH" --json number --jq '.[0].number' 2>/dev/null || echo "")
+  # Build tree entries — create blobs for each file
+  TREE_ENTRIES="[]"
+  for file in "${FILES_TO_COMMIT[@]}"; do
+    CONTENT=$(base64 < "$file")
+    BLOB_SHA=$(gh api "repos/${REPO}/git/blobs" \
+      -f "content=${CONTENT}" \
+      -f "encoding=base64" \
+      --jq '.sha')
+    TREE_ENTRIES=$(echo "$TREE_ENTRIES" | jq \
+      --arg path "$file" \
+      --arg sha "$BLOB_SHA" \
+      '. + [{"path": $path, "mode": "100644", "type": "blob", "sha": $sha}]')
+  done
+
+  # Create tree
+  NEW_TREE=$(echo "$TREE_ENTRIES" | jq -c '{base_tree: "'"$BASE_TREE"'", tree: .}' | \
+    gh api "repos/${REPO}/git/trees" --input - --jq '.sha')
+
+  # Create commit (API commits are automatically signed/verified)
+  NEW_COMMIT=$(gh api "repos/${REPO}/git/commits" \
+    -f "message=${COMMIT_MESSAGE}" \
+    -f "tree=${NEW_TREE}" \
+    -f "parents[]=${PARENT_SHA}" \
+    --jq '.sha')
+
+  # Update branch ref
+  gh api "repos/${REPO}/git/refs/heads/${BRANCH_NAME}" \
+    -X PATCH \
+    -f "sha=${NEW_COMMIT}" \
+    -F "force=true"
+
+  echo "✅ Committed ${NEW_COMMIT:0:8} to ${BRANCH_NAME}"
+
+  # Create or update PR
+  EXISTING_PR=$(gh pr list --repo "$REPO" --head "$BRANCH_NAME" --base "$TARGET_BRANCH" --json number --jq '.[0].number' 2>/dev/null || echo "")
 
   if [ -n "$EXISTING_PR" ] && [ "$EXISTING_PR" != "null" ]; then
     echo "Updating existing PR #$EXISTING_PR"
-    gh pr edit "$EXISTING_PR" --body-file pr_body.md
+    gh pr edit "$EXISTING_PR" --repo "$REPO" --body-file pr_body.md
     echo "✅ Updated PR #$EXISTING_PR"
   else
     echo "Creating new PR"
     gh pr create \
+      --repo "$REPO" \
       --base "$TARGET_BRANCH" \
       --head "$BRANCH_NAME" \
       --title "🚀 Upgrade to Xion $RELEASE_TAG" \
