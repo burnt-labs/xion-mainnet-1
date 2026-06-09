@@ -85,24 +85,38 @@ fetch_release_checksums() {
   CHECKSUMS_URL="https://github.com/burnt-labs/xion/releases/download/$RELEASE_TAG/xiond-${RELEASE_VERSION}-checksums.txt"
   HTTP_CODE=$(curl -sL -w "%{http_code}" "$CHECKSUMS_URL" -o checksums_temp.txt)
 
-  if [ "${HTTP_CODE: -3}" = "200" ]; then
-    DARWIN_AMD64_CHECKSUM=$(grep "darwin_amd64\.tar\.gz$" checksums_temp.txt | awk '{print $1}')
-    DARWIN_ARM64_CHECKSUM=$(grep "darwin_arm64\.tar\.gz$" checksums_temp.txt | awk '{print $1}')
-    LINUX_AMD64_CHECKSUM=$(grep "linux_amd64\.tar\.gz$" checksums_temp.txt | awk '{print $1}')
-    LINUX_ARM64_CHECKSUM=$(grep "linux_arm64\.tar\.gz$" checksums_temp.txt | awk '{print $1}')
-    echo "✅ Real checksums fetched"
-  else
-    echo "⚠️  Checksums not available for $RELEASE_TAG (HTTP ${HTTP_CODE: -3})"
-    echo "    This is expected for future releases not yet published"
+  if [ "${HTTP_CODE: -3}" != "200" ]; then
+    echo "❌ ERROR: Checksums not available for $RELEASE_TAG (HTTP ${HTTP_CODE: -3})"
     echo "    URL: $CHECKSUMS_URL"
-    DARWIN_AMD64_CHECKSUM="$PLACEHOLDER_CHECKSUM"
-    DARWIN_ARM64_CHECKSUM="$PLACEHOLDER_CHECKSUM"
-    LINUX_AMD64_CHECKSUM="$PLACEHOLDER_CHECKSUM"
-    LINUX_ARM64_CHECKSUM="$PLACEHOLDER_CHECKSUM"
-    echo "    Using placeholder checksums"
+    echo "    The GitHub release must be published before cutting the upgrade"
+    echo "    proposal PR. Refusing to generate placeholder checksums."
+    rm -f checksums_temp.txt
+    exit 1
   fi
 
+  DARWIN_AMD64_CHECKSUM=$(grep "darwin_amd64\.tar\.gz$" checksums_temp.txt | awk '{print $1}')
+  DARWIN_ARM64_CHECKSUM=$(grep "darwin_arm64\.tar\.gz$" checksums_temp.txt | awk '{print $1}')
+  LINUX_AMD64_CHECKSUM=$(grep "linux_amd64\.tar\.gz$" checksums_temp.txt | awk '{print $1}')
+  LINUX_ARM64_CHECKSUM=$(grep "linux_arm64\.tar\.gz$" checksums_temp.txt | awk '{print $1}')
   rm -f checksums_temp.txt
+
+  # Every checksum must be a real 64-char hex sha256, never empty or a placeholder.
+  local sha_re='^[0-9a-f]{64}$'
+  for pair in \
+    "darwin/amd64:$DARWIN_AMD64_CHECKSUM" \
+    "darwin/arm64:$DARWIN_ARM64_CHECKSUM" \
+    "linux/amd64:$LINUX_AMD64_CHECKSUM" \
+    "linux/arm64:$LINUX_ARM64_CHECKSUM"; do
+    platform="${pair%%:*}"
+    value="${pair#*:}"
+    if [[ ! "$value" =~ $sha_re ]]; then
+      echo "❌ ERROR: Invalid or missing sha256 for $platform: '$value'"
+      echo "    Expected a 64-char hex digest from $CHECKSUMS_URL"
+      exit 1
+    fi
+  done
+
+  echo "✅ Real checksums fetched and validated"
 }
 
 fetch_github_comparison() {
@@ -230,6 +244,38 @@ substitute_release_notes() {
     sed -i "s|{{VERSION}}|$VERSION|g" "$RELEASE_NOTES_FILE"
     echo "✅ Template variables substituted"
   fi
+}
+
+validate_no_placeholders() {
+  echo "📋 Validating generated files contain no placeholders..."
+
+  local errors=0
+  for file in "$PROPOSAL_FILE" "$RELEASE_FILE" "$RELEASE_NOTES_FILE"; do
+    [ -f "$file" ] || continue
+    # Reject leftover ADD-HERE placeholders and unsubstituted {{TEMPLATE}} vars.
+    if grep -nE 'ADD-HERE|\{\{[A-Z_]+\}\}' "$file" >/dev/null 2>&1; then
+      echo "❌ ERROR: $file still contains placeholders/unsubstituted variables:"
+      grep -nE 'ADD-HERE|\{\{[A-Z_]+\}\}' "$file" | sed 's/^/      /'
+      errors=$((errors + 1))
+    fi
+  done
+
+  # Release file must carry four real sha256 digests.
+  if [ -f "$RELEASE_FILE" ]; then
+    local sha_count
+    sha_count=$(grep -oE 'checksum=sha256:[0-9a-f]{64}' "$RELEASE_FILE" | wc -l | tr -d ' ')
+    if [ "$sha_count" -ne 4 ]; then
+      echo "❌ ERROR: $RELEASE_FILE has $sha_count valid sha256 checksums, expected 4"
+      errors=$((errors + 1))
+    fi
+  fi
+
+  if [ "$errors" -ne 0 ]; then
+    echo "❌ Aborting before commit: placeholder/validation check failed ($errors file(s))."
+    exit 1
+  fi
+
+  echo "✅ No placeholders found in generated files"
 }
 
 generate_pr_body() {
@@ -386,6 +432,7 @@ main() {
   create_release_files
   determine_file_paths
   substitute_release_notes
+  validate_no_placeholders
   generate_pr_body
   commit_and_push_pr
 
