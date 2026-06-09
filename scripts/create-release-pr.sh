@@ -199,13 +199,17 @@ fi
 
 if [ "$SHOULD_UPDATE_RELEASE" = true ]; then
     echo "Creating/updating release file: $RELEASE_FILE"
+    # Binary asset filenames match the full release version (e.g. 29.0.1),
+    # not ${VERSION_NUM}.0.0 — using .0.0 produced broken URLs like
+    # xiond_29.0.0_* under the v29.0.1 tag where no such asset exists.
+    RELEASE_VERSION_NUM="${VERSION_FULL#v}"
     cat > "$RELEASE_FILE" << EOF
 {
     "binaries": {
-        "darwin/amd64": "https://github.com/burnt-labs/xion/releases/download/${VERSION_FULL}/xiond_${VERSION_NUM}.0.0_darwin_amd64.tar.gz?checksum=sha256:${DARWIN_AMD64_CHECKSUM}",
-        "darwin/arm64": "https://github.com/burnt-labs/xion/releases/download/${VERSION_FULL}/xiond_${VERSION_NUM}.0.0_darwin_arm64.tar.gz?checksum=sha256:${DARWIN_ARM64_CHECKSUM}",
-        "linux/amd64": "https://github.com/burnt-labs/xion/releases/download/${VERSION_FULL}/xiond_${VERSION_NUM}.0.0_linux_amd64.tar.gz?checksum=sha256:${LINUX_AMD64_CHECKSUM}",
-        "linux/arm64": "https://github.com/burnt-labs/xion/releases/download/${VERSION_FULL}/xiond_${VERSION_NUM}.0.0_linux_arm64.tar.gz?checksum=sha256:${LINUX_ARM64_CHECKSUM}"
+        "darwin/amd64": "https://github.com/burnt-labs/xion/releases/download/${VERSION_FULL}/xiond_${RELEASE_VERSION_NUM}_darwin_amd64.tar.gz?checksum=sha256:${DARWIN_AMD64_CHECKSUM}",
+        "darwin/arm64": "https://github.com/burnt-labs/xion/releases/download/${VERSION_FULL}/xiond_${RELEASE_VERSION_NUM}_darwin_arm64.tar.gz?checksum=sha256:${DARWIN_ARM64_CHECKSUM}",
+        "linux/amd64": "https://github.com/burnt-labs/xion/releases/download/${VERSION_FULL}/xiond_${RELEASE_VERSION_NUM}_linux_amd64.tar.gz?checksum=sha256:${LINUX_AMD64_CHECKSUM}",
+        "linux/arm64": "https://github.com/burnt-labs/xion/releases/download/${VERSION_FULL}/xiond_${RELEASE_VERSION_NUM}_linux_arm64.tar.gz?checksum=sha256:${LINUX_ARM64_CHECKSUM}"
     }
 }
 EOF
@@ -270,28 +274,11 @@ if [ "$SHOULD_UPDATE_RELEASE_NOTES" = true ]; then
 
 ## Overview
 
-The Xion {{RELEASE_TAG}} series includes [--ADD-HERE-OVERVIEW-DESCRIPTION--]. This is the initial release with only {{RELEASE_TAG}} available.
+This release upgrades the chain to Xion {{RELEASE_TAG}}. See the full changelog below for the complete list of changes.
 
 ## What's Changed
 
-### {{RELEASE_TAG}} (Only Version)
-
-#### WebAuthn & Authentication
-- **[--ADD-HERE-WEBAUTHN-FEATURE--]**: [--ADD-HERE-DESCRIPTION--] by [@--ADD-HERE-USERNAME--](https://github.com/--ADD-HERE-USERNAME--) in [#--ADD-HERE-PR-NUMBER--](https://github.com/burnt-labs/xion/pull/--ADD-HERE-PR-NUMBER--)
-
-#### CosmWasm & Module Updates
-- **[--ADD-HERE-COSMWASM-UPDATE--]**: [--ADD-HERE-DESCRIPTION--] by [@--ADD-HERE-USERNAME--](https://github.com/--ADD-HERE-USERNAME--) in [#--ADD-HERE-PR-NUMBER--](https://github.com/burnt-labs/xion/pull/--ADD-HERE-PR-NUMBER--)
-
-#### Protocol & Core Changes
-- **[--ADD-HERE-PROTOCOL-CHANGE--]**: [--ADD-HERE-DESCRIPTION--] by [@--ADD-HERE-USERNAME--](https://github.com/--ADD-HERE-USERNAME--) in [#--ADD-HERE-PR-NUMBER--](https://github.com/burnt-labs/xion/pull/--ADD-HERE-PR-NUMBER--)
-
-#### Bug Fixes & Improvements
-- **[--ADD-HERE-BUG-FIX--]**: [--ADD-HERE-DESCRIPTION--] by [@--ADD-HERE-USERNAME--](https://github.com/--ADD-HERE-USERNAME--) in [#--ADD-HERE-PR-NUMBER--](https://github.com/burnt-labs/xion/pull/--ADD-HERE-PR-NUMBER--)
-- **[--ADD-HERE-IMPROVEMENT--]**: [--ADD-HERE-DESCRIPTION--] by [@--ADD-HERE-USERNAME--](https://github.com/--ADD-HERE-USERNAME--) in [#--ADD-HERE-PR-NUMBER--](https://github.com/burnt-labs/xion/pull/--ADD-HERE-PR-NUMBER--)
-
-#### Code Quality & Testing
-- **[--ADD-HERE-TEST-UPDATE--]**: [--ADD-HERE-DESCRIPTION--] by [@--ADD-HERE-USERNAME--](https://github.com/--ADD-HERE-USERNAME--) in [#--ADD-HERE-PR-NUMBER--](https://github.com/burnt-labs/xion/pull/--ADD-HERE-PR-NUMBER--)
-- **[--ADD-HERE-CODE-QUALITY--]**: [--ADD-HERE-DESCRIPTION--] by [@--ADD-HERE-USERNAME--](https://github.com/--ADD-HERE-USERNAME--) in [#--ADD-HERE-PR-NUMBER--](https://github.com/burnt-labs/xion/pull/--ADD-HERE-PR-NUMBER--)
+See the [full changelog](https://github.com/burnt-labs/xion/compare/{{PREVIOUS_VERSION}}...{{RELEASE_TAG}}) for the complete list of commits and pull requests in this release.
 
 ## Upgrade Information
 
@@ -302,14 +289,6 @@ The Xion {{RELEASE_TAG}} series includes [--ADD-HERE-OVERVIEW-DESCRIPTION--]. Th
 ## Release Links
 
 - **{{RELEASE_TAG}}**: [GitHub Release](https://github.com/burnt-labs/xion/releases/tag/{{RELEASE_TAG}})
-
-## Contributors
-
-Special thanks to the following contributors who made this release possible:
-
-- [@--ADD-HERE-CONTRIBUTOR-1--](https://github.com/--ADD-HERE-CONTRIBUTOR-1--)
-- [@--ADD-HERE-CONTRIBUTOR-2--](https://github.com/--ADD-HERE-CONTRIBUTOR-2--)
-- [@--ADD-HERE-CONTRIBUTOR-3--](https://github.com/--ADD-HERE-CONTRIBUTOR-3--)
 
 ## Full Changelog
 

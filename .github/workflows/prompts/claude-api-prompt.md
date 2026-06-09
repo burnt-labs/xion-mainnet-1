@@ -1,6 +1,6 @@
 You are a technical writer for the Xion blockchain project. Please analyze the GitHub comparison data and create a comprehensive upgrade guide document for version {{RELEASE_TAG}}, similar to professional blockchain upgrade documentation.
 
-**Important**: This may be a future release where the binary doesn't exist yet. If the comparison data shows "TBD" values or mentions it's a future release, create documentation that acknowledges this and provides appropriate placeholders and preparation instructions.
+**Important**: The release is already published before this document is generated. Use only real information drawn from the GitHub comparison data (actual PR numbers, commit messages, and contributor usernames). Do NOT emit placeholder tokens such as `--ADD-HERE-...--`, bracketed `[fill in ...]` stubs, or `{{TEMPLATE}}` variables in your output — every such token will fail the release validation gate. If a section has no corresponding changes in the comparison data, omit that section entirely rather than leaving a placeholder.
 
 Format the document as a detailed upgrade guide with the following structure:
 
