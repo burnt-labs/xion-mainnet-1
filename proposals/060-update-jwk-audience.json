@@ -1,0 +1,16 @@
+{
+  "messages": [
+    {
+      "@type": "/xion.jwk.v1.MsgUpdateAudience",
+      "admin": "xion10d07y265gmmuvt4z0w9aw880jnsr700jctf8qc",
+      "new_admin": "xion1qc8wmrvppsrpamn0yxn6sjfaz3722hqzhps4ld",
+      "aud": "project-live-7e4a3221-79cd-4f34-ac1d-fedac4bde13e",
+      "key": "{\"alg\":\"RS256\",\"e\":\"AQAB\",\"kty\":\"RSA\",\"n\":\"ogx8IwOclQm15zGPhaGHsLaX76-q9cjzTbf9Ku_DyH9eOmw5wXmWkd17KN2dq7tZMPEZPBXPUsMn3PMsm30GKo6mv7a7OnuTgYYO83nliLG7JF3rmyKGl8-zCW2ASVFWll9ivU7NKOpILG0FoBChaNhlwlg-1dMZ5HauB5QUn6KMLruc5miaAZDdsEm-JzRadnby-urRWU3RQGu7U1RKHLkgBzvGRRRxVP-hrcT-covg5NqTAfZI0JBtMPWUdh0sxAiCQv1TRdAOmORVdd7AlMr20b7e6FJuhhtXyFNhvl1xuQ5WeqiWhA5OvXodZNpC9wXhKoAbHSgOPm1OupOAt71Q6FSt7SDYYyNUmXXukhokbiegXWdnMPJjme8Vj1-weGM-g3TCrhPZ4sK411nlhGLXEgaSvKnTC2n82hapwnwuiwQlS7P1e1RVhvVxixIt7z5MSNNONX1k8Q0G8JLHtIAD-Kp3EQ719vu3u2usQ-w-t80Uu-iewcBj_DNK6CD57xHp9Jij-3fNhM3Yz_lQOgv2auRaGKSpntoHLJ80BydHVefrS8mex14TlktOHxYaVKQAOOGnxfX5AWevuALlW3xh7_qxqlswwQNAZ0Zv-7az6-ySMIcyMQJF4U9TN4uORcekn4BQhipm7N6Ovv875w9FkTa4n_EBg3MCFzmlPGE\"}",
+      "new_aud": ""
+    }
+  ],
+  "title": "Update JWK Audience Admin and Public Key",
+  "summary": "Update the existing JWK audience public key and transfer its admin to xion1qc8wmrvppsrpamn0yxn6sjfaz3722hqzhps4ld.",
+  "deposit": "5000000000uxion",
+  "expedited": true
+}
