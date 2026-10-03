@@ -6,7 +6,7 @@
             "content": {
                 "@type": "/cosmos.params.v1beta1.ParameterChangeProposal",
                 "title": "Add verUSD to globalfee module",
-                "description": "Add Verona USD (factory/xion17grq736740r70awldugfs3mls3stu9haewctv2/verusd, display verUSD, 6 decimals) to the globalfee module's MinimumGasPricesParam so transaction fees can be paid in verUSD, at 0.005 verUSD per unit of gas, the same rate as Noble USDC. MinimumGasPricesParam is replaced in full, so the existing entries are restated unchanged: Noble USDC (ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349) at 0.005 and uxion at 0.001. Denominations are in ascending order as the module's validation requires. BypassMinFeeMsgTypes and MaxTotalBypassMinFeeMsgGasUsage are not changed.",
+                "description": "Add Verona USD (factory/xion17grq736740r70awldugfs3mls3stu9haewctv2/verusd, display verUSD, 6 decimals) to the globalfee module's MinimumGasPricesParam so transaction fees can be paid in verUSD, at a minimum gas price of 0.005 base units per unit of gas (0.000000005 verUSD), the same rate as Noble USDC. All prices here are in each token's base denomination. MinimumGasPricesParam is replaced in full, so the existing entries are restated unchanged: Noble USDC (ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349) at 0.005 and uxion at 0.001. Denominations are in ascending order as the module's validation requires. BypassMinFeeMsgTypes and MaxTotalBypassMinFeeMsgGasUsage are not changed.",
                 "changes": [
                     {
                         "subspace": "globalfee",
@@ -25,7 +25,7 @@
         }
     ],
     "title": "Add verUSD to globalfee module",
-    "summary": "Add Verona USD (factory/xion17grq736740r70awldugfs3mls3stu9haewctv2/verusd, display verUSD, 6 decimals) to the globalfee module's MinimumGasPricesParam so transaction fees can be paid in verUSD, at 0.005 verUSD per unit of gas, the same rate as Noble USDC. MinimumGasPricesParam is replaced in full, so the existing entries are restated unchanged: Noble USDC (ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349) at 0.005 and uxion at 0.001. Denominations are in ascending order as the module's validation requires. BypassMinFeeMsgTypes and MaxTotalBypassMinFeeMsgGasUsage are not changed.",
+    "summary": "Add Verona USD (factory/xion17grq736740r70awldugfs3mls3stu9haewctv2/verusd, display verUSD, 6 decimals) to the globalfee module's MinimumGasPricesParam so transaction fees can be paid in verUSD, at a minimum gas price of 0.005 base units per unit of gas (0.000000005 verUSD), the same rate as Noble USDC. All prices here are in each token's base denomination. MinimumGasPricesParam is replaced in full, so the existing entries are restated unchanged: Noble USDC (ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349) at 0.005 and uxion at 0.001. Denominations are in ascending order as the module's validation requires. BypassMinFeeMsgTypes and MaxTotalBypassMinFeeMsgGasUsage are not changed.",
     "deposit": "5000000000uxion",
     "expedited": true,
     "metadata": ""
