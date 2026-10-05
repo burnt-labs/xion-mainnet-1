@@ -24,7 +24,9 @@ jobs:
           persist-credentials: false
 
       - name: Check script syntax
-        run: bash -n scripts/orchestrate-release.sh scripts/tests/release-notes-test.sh
+        run: |
+          bash -n scripts/orchestrate-release.sh
+          bash -n scripts/tests/release-notes-test.sh
 
       - name: Run release notes tests
         run: bash scripts/tests/release-notes-test.sh
