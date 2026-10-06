@@ -154,15 +154,34 @@ fetch_github_comparison() {
   echo "✅ Comparison: $COMMIT_COUNT commits, $FILES_CHANGED files changed"
 }
 
+# Release notes are optional. Any failure to obtain them (transport error,
+# non-2xx status, non-JSON body, API error, missing or blank content) warns and
+# returns success so create-release-pr.sh falls back to the release notes
+# template. Only nonblank content from a successful response is written.
+skip_generated_notes() {
+  echo "⚠️  Release notes not generated ($1); falling back to the release notes template"
+  rm -f generated_release_notes.md copilot_request.json copilot_response.json
+}
+
 generate_claude_notes() {
   echo "📋 Generating release notes via GitHub Copilot (Models API)..."
 
+  # Never let notes from an earlier attempt stand in for this one.
+  rm -f generated_release_notes.md copilot_request.json copilot_response.json
+
+  if [ ! -r .github/workflows/prompts/claude-api-prompt.md ]; then
+    skip_generated_notes "prompt file missing"
+    return 0
+  fi
   PROMPT=$(cat .github/workflows/prompts/claude-api-prompt.md)
   PROMPT="${PROMPT//\{\{RELEASE_TAG\}\}/$RELEASE_TAG}"
   PROMPT="${PROMPT//\{\{CALCULATED_HEIGHT\}\}/$CALCULATED_HEIGHT}"
   PROMPT="${PROMPT//\{\{PREVIOUS_VERSION\}\}/$PREVIOUS_VERSION}"
 
-  COMPARISON_JSON=$(cat comparison_data.json | jq -c .)
+  if ! COMPARISON_JSON=$(jq -c . comparison_data.json 2>/dev/null); then
+    skip_generated_notes "comparison data unreadable"
+    return 0
+  fi
   FULL_CONTENT="${PROMPT}\n\nGitHub Comparison Data:\n${COMPARISON_JSON}"
 
   cat > copilot_request.json <<EOF
@@ -178,23 +197,47 @@ generate_claude_notes() {
 }
 EOF
 
-  RESPONSE=$(curl -s -X POST "https://models.github.ai/inference/chat/completions" \
+  local http_code curl_status=0
+  http_code=$(curl -sS --connect-timeout 10 --max-time 60 \
+    -o copilot_response.json -w '%{http_code}' \
+    -X POST "https://models.github.ai/inference/chat/completions" \
     -H "Content-Type: application/json" \
     -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-    --data @copilot_request.json)
+    --data @copilot_request.json) || curl_status=$?
+  rm -f copilot_request.json
 
-  API_ERROR=$(echo "$RESPONSE" | jq -r '.error.message // empty')
-  if [ -n "$API_ERROR" ]; then
-    echo "⚠️  GitHub Models API error: $API_ERROR"
-  else
-    RELEASE_NOTES_CONTENT=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
-    if [ -n "$RELEASE_NOTES_CONTENT" ] && [ "$RELEASE_NOTES_CONTENT" != "null" ]; then
-      echo "$RELEASE_NOTES_CONTENT" > generated_release_notes.md
-      echo "✅ Release notes generated"
-    fi
+  if [ "$curl_status" -ne 0 ]; then
+    skip_generated_notes "request failed, curl exit $curl_status"
+    return 0
+  fi
+  if [[ ! "$http_code" =~ ^2[0-9][0-9]$ ]]; then
+    skip_generated_notes "HTTP $http_code"
+    return 0
+  fi
+  if [ ! -s copilot_response.json ] || ! jq empty copilot_response.json >/dev/null 2>&1; then
+    skip_generated_notes "response is not JSON: $(head -c 120 copilot_response.json 2>/dev/null | tr -d '\r\n')"
+    return 0
   fi
 
-  rm -f copilot_request.json
+  API_ERROR=$(jq -r '(.error? // empty) | if type == "object" then (.message // "unknown error") else tostring end' copilot_response.json 2>/dev/null) ||
+    API_ERROR="unreadable error field"
+  if [ -n "$API_ERROR" ]; then
+    skip_generated_notes "GitHub Models API error: $API_ERROR"
+    return 0
+  fi
+
+  if ! RELEASE_NOTES_CONTENT=$(jq -r '(try .choices[0].message.content catch null) | if type == "string" then . else empty end' copilot_response.json 2>/dev/null); then
+    skip_generated_notes "response could not be parsed"
+    return 0
+  fi
+  if [ -z "${RELEASE_NOTES_CONTENT//[[:space:]]/}" ]; then
+    skip_generated_notes "response has no release notes content"
+    return 0
+  fi
+
+  printf '%s\n' "$RELEASE_NOTES_CONTENT" > generated_release_notes.md
+  rm -f copilot_response.json
+  echo "✅ Release notes generated"
 }
 
 create_release_files() {
@@ -446,5 +489,7 @@ main() {
   echo "Branch: $BRANCH_NAME → $TARGET_BRANCH"
 }
 
-# Run main function
-main
+# Run main function only when executed, so tests can source the functions.
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+  main
+fi
