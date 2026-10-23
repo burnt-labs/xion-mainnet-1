@@ -40,6 +40,8 @@ When a new xion version is released:
 2. Add `release_notes/v<MAJOR>.md` with upgrade details
 3. Update `release_notes/upgrade_path.md` with the new entry
 
+Upgrade heights are always a multiple of 1000 (`plan.height % 1000 == 0`). Estimate the height for the target time from the live tip and recent block times, then round to the nearest multiple of 1000 and restate the expected time from the rounded height. `scripts/orchestrate-release.sh` already rounds; a hand-made proposal must too.
+
 Binary JSON format:
 ```json
 {
