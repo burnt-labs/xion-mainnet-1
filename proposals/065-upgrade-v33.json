@@ -5,14 +5,14 @@
       "authority": "xion10d07y265gmmuvt4z0w9aw880jnsr700jctf8qc",
       "plan": {
         "name": "v33",
-        "height": "24850600",
+        "height": "24852000",
         "info": "https://raw.githubusercontent.com/burnt-labs/xion-mainnet-1/main/releases/v33.json",
         "upgraded_client_state": null
       }
     }
   ],
   "title": "Software Upgrade v33",
-  "summary": "Upgrade xion-mainnet-1 to v33 (xiond v33.0.1) at block height 24850600, expected around 2026-11-04 02:15 UTC. Release notes: https://github.com/burnt-labs/xion/releases/tag/v33.0.1",
+  "summary": "Upgrade xion-mainnet-1 to v33 (xiond v33.0.1) at block height 24852000, expected around 2026-11-04 03:50 UTC. Release notes: https://github.com/burnt-labs/xion/releases/tag/v33.0.1",
   "deposit": "5000000000uxion",
   "expedited": true
 }
