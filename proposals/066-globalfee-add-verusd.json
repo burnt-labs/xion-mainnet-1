@@ -1,0 +1,38 @@
+{
+    "messages": [
+        {
+            "@type": "/xion.globalfee.v1.MsgUpdateParams",
+            "authority": "xion10d07y265gmmuvt4z0w9aw880jnsr700jctf8qc",
+            "params": {
+                "minimum_gas_prices": [
+                    {
+                        "denom": "factory/xion17grq736740r70awldugfs3mls3stu9haewctv2/verusd",
+                        "amount": "0.005000000000000000"
+                    },
+                    {
+                        "denom": "ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349",
+                        "amount": "0.005000000000000000"
+                    },
+                    {
+                        "denom": "uxion",
+                        "amount": "0.001000000000000000"
+                    }
+                ],
+                "bypass_min_fee_msg_types": [
+                    "/xion.v1.MsgSend",
+                    "/xion.v1.MsgMultiSend",
+                    "/xion.jwk.v1.MsgDeleteAudience",
+                    "/xion.jwk.v1.MsgDeleteAudienceClaim",
+                    "/cosmos.authz.v1beta1.MsgRevoke",
+                    "/cosmos.feegrant.v1beta1.MsgRevokeAllowance"
+                ],
+                "max_total_bypass_min_fee_msg_gas_usage": "1000000"
+            }
+        }
+    ],
+    "title": "Add verUSD to globalfee module",
+    "summary": "Add Verona USD (factory/xion17grq736740r70awldugfs3mls3stu9haewctv2/verusd, display verUSD, 6 decimals) to the globalfee module's minimum_gas_prices so transaction fees can be paid in verUSD, at a minimum gas price of 0.005 base units per unit of gas (0.000000005 verUSD), the same rate as Noble USDC. All prices here are in each token's base denomination. After the v32 upgrade globalfee params change through MsgUpdateParams, which replaces the full Params, so the existing values are restated unchanged as read from /xion/globalfee/v1/params at v33: Noble USDC (ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349) at 0.005, uxion at 0.001, the six bypass_min_fee_msg_types and max_total_bypass_min_fee_msg_gas_usage 1000000. Denominations are in ascending order as the module's validation requires.",
+    "deposit": "5000000000uxion",
+    "expedited": true,
+    "metadata": ""
+}
